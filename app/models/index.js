@@ -21,8 +21,34 @@ db.sequelize = sequelize;
 
 // DB Table
 db.users = require("./user.model.js")(sequelize, Sequelize);
+db.stores = require("./store.model.js")(sequelize, Sequelize);
+db.products = require("./product.model.js")(sequelize, Sequelize);
+db.compositions = require("./composition.model.js")(sequelize, Sequelize);
+db.compositionDetails = require("./compositionDetail.model.js")(sequelize, Sequelize);
+
+//DB Relation
+db.users.hasOne(db.stores, {
+    onDelete: "cascade",
+});
+
+db.products.belongsTo(db.stores, {
+    foreignKey: 'storeId', as: 'store',
+});
+db.products.hasMany(db.compositionDetails, {
+    onDelete: "cascade",
+});
+
+db.compositions.belongsTo(db.stores, {
+    foreignKey: 'storeId', as: 'store',
+});
+db.compositions.hasMany(db.compositionDetails, {
+    onDelete: "cascade",
+});
 
 
+db.compositionDetails.belongsTo(db.products, {
+    foreignKey: 'productId', as: 'product',
+});
 
 module.exports = db;
 

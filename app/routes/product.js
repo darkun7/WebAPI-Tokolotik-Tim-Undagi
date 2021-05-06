@@ -6,7 +6,8 @@ const User = db.users;
 
 router.get('/', verify, (request, response) => {
     
-    // let user = request.user;
+    let user = request.user;
+    console.log(user);
     // let uid = user['uid'];
     // user = User.findByPk(uid)
     //             .then((data) => {
@@ -16,7 +17,7 @@ router.get('/', verify, (request, response) => {
     //                     message: "Error retrieving post with id=" + uid
     //                 });
     //             });
-    response.send('Show All Product');
+    // response.send('Show All Product');
 });
 
 module.exports = router;

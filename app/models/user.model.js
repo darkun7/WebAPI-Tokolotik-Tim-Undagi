@@ -22,11 +22,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        verified_email: {
+        verifiedEmail: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
-        token_tokopedia: {
+        profileImage: {
+            type: DataTypes.STRING
+        },
+        tokenTokopedia: {
             type: DataTypes.STRING
         }
     });
