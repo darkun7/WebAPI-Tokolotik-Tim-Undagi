@@ -48,12 +48,14 @@ exports.login = async (request, response) => {
     let payload = {
         uid: user.id,
     }
-    const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '60m'});
+    const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '120m'});
+    response.cookie('jwt', token, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
     response.status(200).header('auth-token', token).send(token);
 };
 
 exports.logout = async (request, response) => {
-    
+    response.cookie('jwt', '', { maxAge: 1 });
+    response.status(200).send({ auth: false, token: null });
 }
 
 // Select All
