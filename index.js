@@ -19,12 +19,18 @@ if (development){
 
 //Import Routes
 const authRoute = require('./app/routes/auth');
-const productRoute = require('./app/routes/product');
-const storeRoute = require('./app/routes/store');
+const userStoreRoute = require('./app/routes/user/store');
+const storeProductRoute = require('./app/routes/user/store/product');
+
+// const productRoute = require('./app/routes/product');
+// const storeRoute = require('./app/routes/store');
 
 app.use('/api/users',authRoute);
-app.use('/api/stores',storeRoute);
-app.use('/api/products',productRoute);
+app.use('/api/users/stores',userStoreRoute);
+app.use('/api/users/stores/products',storeProductRoute);
+
+// app.use('/api/stores',storeRoute);
+// app.use('/api/products',productRoute);
 
 app.get("/", (request, response) => {
     response.json({ message: "API TokoLitik" });
