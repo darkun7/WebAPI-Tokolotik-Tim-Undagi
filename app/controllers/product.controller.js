@@ -5,27 +5,64 @@ const Op = db.Sequelize.Op;
 // Create
 exports.create = async (request, response) => {
     const product = {
-        user_id = request.body.user_id,
-        product_ext_id: request.body.product_ext_id,
-        product_name: request.body.product_name,
+        storeId = request.body.storeId,
+        tokopediaProductId: request.body.tokopediaProductId ? request.body.tokopediaProductId : '',
+        tokopediaProductUrl: request.body.tokopediaProductUrl ? request.body.tokopediaProductUrl : '',
+        productName: request.body.productName,
+        price: request.body.price,
+        image: request.body.image,
     }
 
     Product.create(product)
-        .then((result) => {
-            response.status(200).send(result);
+        .then((data) => {
+            response.status(201).send(data);
         }).catch((err) => {
-            response.status(500).send({message: err.message || "Gagal Membuat Akun"})
-        })
+            response.status(500).send({
+                message: err.message || 'Gagal membuat produk'
+            });
+        });
 };
 
 // Select All
-exports.all = async (request, response) => {
-
+exports.global = async (request, response) => {
+    Product.findAll()
+        .then((data) => {
+            response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message:
+                    err.message || "Gagal memperoleh produk"
+            });
+        });
 };
+
+// Select All From User
+exports.all = async (request, response) => {
+    const storeId = request.body.storeId;
+    Product.findAll({ where: { storeId: storeId } })
+        .then((data) => {
+            response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message:
+                    err.message || "Gagal memperoleh produk"
+            });
+        });
+};
+
 
 // Find One
 exports.findOne = (request, response) => {
+    const id = request.params.id;
 
+    Product.findByPk(id)
+        .then((data) => {
+            res.send(data);
+        }).catch((err) => {
+            res.status(500).send({
+                message: "Error retrieving product with id=" + id
+            });
+        });
 };
 
 // Update

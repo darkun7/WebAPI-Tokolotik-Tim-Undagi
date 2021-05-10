@@ -1,15 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define("composition_detail", {
+    const compositionDetail = sequelize.define("composition_detail", {
         compositionId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
         },
         productId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
         },
         amount: {
             type: DataTypes.INTEGER,
+            allowNull: false,
         },
     });
 
-    return User;
+    return compositionDetail;
 }

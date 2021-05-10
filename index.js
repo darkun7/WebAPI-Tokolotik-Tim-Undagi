@@ -12,15 +12,19 @@ const development = !!JSON.parse(String(process.env.DEVELOPMENT).toLowerCase());
 
 // Models
 const db = require('./app/models');
-db.sequelize.sync({ force: development });
+if (development){
+    db.sequelize.sync({ force: true });
+}
 
 
 //Import Routes
 const authRoute = require('./app/routes/auth');
 const productRoute = require('./app/routes/product');
+const storeRoute = require('./app/routes/store');
 
-app.use('/api/user',authRoute);
-app.use('/api/product',productRoute);
+app.use('/api/users',authRoute);
+app.use('/api/stores',storeRoute);
+app.use('/api/products',productRoute);
 
 app.get("/", (request, response) => {
     response.json({ message: "API TokoLitik" });

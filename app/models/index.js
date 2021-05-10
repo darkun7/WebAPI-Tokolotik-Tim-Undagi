@@ -28,7 +28,7 @@ db.compositionDetails = require("./compositionDetail.model.js")(sequelize, Seque
 
 //DB Relation
 db.users.hasOne(db.stores, {
-    onDelete: "cascade",
+    onDelete: "cascade", foreignKey: 'userId', as: 'store',
 });
 
 db.products.belongsTo(db.stores, {

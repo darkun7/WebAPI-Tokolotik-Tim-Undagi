@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        role: {
+            type: DataTypes.STRING, // buyer/ seller
+            allowNull: false,
+            defaultValue: "buyer",
+        },
         verifiedEmail: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

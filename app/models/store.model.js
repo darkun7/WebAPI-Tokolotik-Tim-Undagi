@@ -1,15 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define("store", {
-        ownerId: {
+    const Store = sequelize.define("store", {
+        userId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
         },
         storeName: {
             type: DataTypes.STRING,
         },
-        StoreDescription: {
+        description: {
             type: DataTypes.TEXT,
         },
     });
 
-    return User;
+    return Store;
 }
