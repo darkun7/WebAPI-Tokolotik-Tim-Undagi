@@ -76,7 +76,7 @@ exports.update = (request, response) => {
                     message: "Informasi bahan baku berhasil diperbarui"
                 });
             } else {
-                response.status(500).send({
+                response.status(403).send({
                     message: `Gagal memperbarui data dengan ID: ${ID}`,
                     error: "Don't have access to do this action"
                 })
@@ -100,7 +100,7 @@ exports.delete = (request, response) => {
                     message: "Bahan baku berhasil dihapus"
                 })
             } else {
-                response.status(500).send({
+                response.status(403).send({
                     message: `Gagal menghapus data dengan ID: ${ID}`,
                     error: "Don't have access to do this action"
                 })

@@ -1,17 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     const Product = sequelize.define("product", {
-        tokopediaProductId: {
-            type: DataTypes.INTEGER,
-        },
-        tokopediaProductUrl: {
+        productName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         storeId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        productName: {
-            type: DataTypes.STRING,
             allowNull: false,
         },
         price: {
@@ -19,6 +13,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         image: {
+            type: DataTypes.STRING,
+        },
+        tokopediaProductId: {
+            type: DataTypes.INTEGER,
+        },
+        tokopediaProductUrl: {
             type: DataTypes.STRING,
         },
     });

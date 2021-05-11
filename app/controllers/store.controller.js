@@ -14,7 +14,8 @@ exports.create = (request, response) => {
             response.status(201).send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: err.message || 'Gagal membuat toko'
+                message: 'Gagal membuat toko',
+                error: err.message
             });
         });
 };
@@ -29,13 +30,15 @@ exports.update = (request, response) => {
                     message: "Informasi toko berhasil diperbarui"
                 });
             } else {
-                response.status(500).send({
-                    message: `Gagal memperbarui data dengan ID: ${ID}`
+                response.status(403).send({
+                    message: `Gagal memperbarui data toko`,
+                    error: "Don't have access to do this action"
                 })
             }
         }).catch((err) => {
             response.status(500).send({
-                message: `Gagal memperbarui data dengan ID: ${ID}` || err.message
+                message: `Gagal memperbarui data toko`,
+                error: err.message
             })
         });
 }
@@ -48,7 +51,8 @@ exports.findOne = (request, response) => {
             response.status(200).send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: `Gagal memperoleh data dengan ID: ${ID}` || err.message
+                message: `Gagal memperoleh data toko`,
+                error: err.message
             });
         });
 };

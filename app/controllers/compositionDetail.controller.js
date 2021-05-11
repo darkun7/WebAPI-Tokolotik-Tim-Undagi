@@ -1,24 +1,21 @@
 const db = require("../models");
-const Product = db.products;
+const CompositionDetail = db.compositionDetails;
 const Op = db.Sequelize.Op;
 
 // Create
 exports.create = async (request, response) => {
-    const product = {
-        storeId : request.body.storeId ? request.body.storeId : response.locals.storeID,
-        tokopediaProductId: request.body.tokopediaProductId,
-        tokopediaProductUrl: request.body.tokopediaProductUrl ? request.body.tokopediaProductUrl : '',
-        productName: request.body.productName,
-        price: request.body.price,
-        image: request.body.image ? request.body.image: '',
+    const compositionDetail = {
+        productId : request.body.productId ? request.body.productId : response.locals.productID,
+        compositionId: request.body.compositionId,
+        amount: request.body.amount ? request.body.amount : 1,
     }
-
-    Product.create(product)
+    
+    CompositionDetail.create(compositionDetail)
         .then((data) => {
             response.status(201).send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal membuat produk",
+                message: "Gagal menambah data bahan baku produk",
                 error: err.message
             });
         });
@@ -26,12 +23,12 @@ exports.create = async (request, response) => {
 
 // Select All
 exports.global = async (request, response) => {
-    Product.findAll()
+    CompositionDetail.findAll()
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal memperoleh produk",
+                message: "Gagal memperoleh data bahan baku produk",
                 error: err.message
             });
         });
@@ -39,14 +36,14 @@ exports.global = async (request, response) => {
 
 // Select All record from Store
 exports.all = async (request, response) => {
-    const storeId = request.body.storeId ? 
-                    request.body.storeId : response.locals.ID;
-    Product.findAll({ where: { storeId: storeId } })
+    const productId = request.body.productId ? 
+                    request.body.productId : response.locals.productID;
+    CompositionDetail.findAll({ where: { productId: productId } })
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal memperoleh produk",
+                message: "Gagal memperoleh bahan baku produk",
                 error: err.message
             });
         });
@@ -57,12 +54,12 @@ exports.all = async (request, response) => {
 exports.findOne = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.findByPk(ID)
+    CompositionDetail.findByPk(ID)
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: `Gagal memperoleh data dengan ID: ${ID}`,
+                message: `Gagal memperoleh data bahan baku produk`,
                 error: err.message
             });
         });
@@ -72,21 +69,21 @@ exports.findOne = (request, response) => {
 exports.update = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.update(request.body, { where: { id: ID }})
+    CompositionDetail.update(request.body, { where: { id: ID }})
         .then((result) => {
             if ( result == 1 ) {
                 response.status(200).send({
-                    message: "Informasi produk berhasil diperbarui"
+                    message: "Informasi bahan baku produk berhasil diperbarui"
                 });
             } else {
                 response.status(403).send({
-                    message: `Gagal memperbarui data dengan ID: ${ID}`,
+                    message: `Gagal memperbarui data bahan baku produk`,
                     error: "Don't have access to do this action"
                 })
             }
         }).catch((err) => {
             response.status(500).send({
-                message: `Gagal memperbarui data dengan ID: ${ID}`,
+                message: `Gagal memperbarui data bahan baku produk`,
                 error: err.message
             })
         });
@@ -96,22 +93,21 @@ exports.update = (request, response) => {
 exports.delete = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.destroy({ where: { id: ID } })
+    CompositionDetail.destroy({ where: { id: ID } })
         .then((result) => {
             if (result == 1) {
                 response.status(200).send({
-                    message: "Produk berhasil dihapus"
+                    message: "Bahan baku berhasil dihapus"
                 })
             } else {
                 response.status(403).send({
-                    message: `Gagal menghapus data dengan ID: ${ID}`,
+                    message: `Gagal menghapus data bahan baku produk`,
                     error: "Don't have access to do this action"
-                    
                 })
             }})
         .catch((err) => {
             response.status(500).send({
-                message: `Gagal menghapus data dengan ID: ${ID}`,
+                message: `Gagal menghapus data bahan baku produk`,
                 error: err.message
             })
         });

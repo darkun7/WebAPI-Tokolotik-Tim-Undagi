@@ -36,7 +36,8 @@ exports.register = async (request, response) => {
             response.status(200).header('auth-token', token).send(token);
         }).catch((err) => {
             response.status(500).send({
-                message: err.message || 'Gagal Membuat Akun'
+                message: 'Gagal Membuat Akun',
+                error: err.message
             });
         });
 };

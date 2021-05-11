@@ -15,7 +15,7 @@ router.get('/', verify, (request,response,next) => {
         next()
       }).catch((err) => {
         response.status(500)
-          .send({message: 'Gagal memperoleh data produk', error: err.message });
+          .send({message: 'Gagal memperoleh data toko', error: err.message });
       });
     },
     compositionController.all
