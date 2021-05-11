@@ -21,6 +21,8 @@ if (development){
 const authRoute = require('./app/routes/auth');
 const userStoreRoute = require('./app/routes/user/store');
 const storeProductRoute = require('./app/routes/user/store/product');
+const compositionProductRoute = require('./app/routes/user/store/composition');
+const compositionDetailRoute = require('./app/routes/user/store/compositionDetail');
 
 // const productRoute = require('./app/routes/product');
 // const storeRoute = require('./app/routes/store');
@@ -28,6 +30,8 @@ const storeProductRoute = require('./app/routes/user/store/product');
 app.use('/api/users',authRoute);
 app.use('/api/users/stores',userStoreRoute);
 app.use('/api/users/stores/products',storeProductRoute);
+app.use('/api/users/stores/compositions',compositionProductRoute);
+app.use('/api/users/stores/products',compositionDetailRoute);
 
 // app.use('/api/stores',storeRoute);
 // app.use('/api/products',productRoute);

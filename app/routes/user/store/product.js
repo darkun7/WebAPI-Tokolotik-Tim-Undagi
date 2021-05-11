@@ -7,14 +7,15 @@ const User = db.users;
 const productController = require('../../../controllers/product.controller')
 
 //Get Product All
-router.get('/', verify, (request,response, next) =>{ 
+router.get('/', verify, (request,response,next) =>{ 
     let user = request.user;
     user = User.findByPk(user.id, { include: ["store"] })
       .then((userStore) => {
         response.locals.ID = userStore.id
         next()
       }).catch((err) => {
-        console.log('Fail get user-product, Error: ', err)
+        response.status(500)
+          .send({message: 'Gagal memperoleh data produk', error: err.message });
       });
     },
     productController.all
@@ -25,7 +26,7 @@ router.get('/:id', verify, productController.findOne);
 
 //Create Product
 /**
- * @request : {storeId, tokopediaProductId, tokopediaProductUrl, productName, price, image}
+ * @request : {"storeId", "tokopediaProductId", "tokopediaProductUrl", "productName", "price", "image"}
  */
 router.post('/', verify, productController.create);
 

@@ -1,24 +1,21 @@
 const db = require("../models");
-const Product = db.products;
+const Composition = db.compositions;
 const Op = db.Sequelize.Op;
 
 // Create
 exports.create = async (request, response) => {
-    const product = {
+    const composition = {
         storeId : request.body.storeId ? request.body.storeId : response.locals.storeID,
-        tokopediaProductId: request.body.tokopediaProductId,
-        tokopediaProductUrl: request.body.tokopediaProductUrl ? request.body.tokopediaProductUrl : '',
-        productName: request.body.productName,
-        price: request.body.price,
-        image: request.body.image ? request.body.image: '',
+        compositionName: request.body.compositionName,
+        unit: request.body.unit ? request.body.unit : '',
     }
 
-    Product.create(product)
+    Composition.create(composition)
         .then((data) => {
             response.status(201).send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal membuat produk",
+                message: "Gagal membuat bahan baku",
                 error: err.message
             });
         });
@@ -26,12 +23,12 @@ exports.create = async (request, response) => {
 
 // Select All
 exports.global = async (request, response) => {
-    Product.findAll()
+    Composition.findAll()
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal memperoleh produk",
+                message: "Gagal memperoleh bahan baku",
                 error: err.message
             });
         });
@@ -41,12 +38,12 @@ exports.global = async (request, response) => {
 exports.all = async (request, response) => {
     const storeId = request.body.storeId ? 
                     request.body.storeId : response.locals.ID;
-    Product.findAll({ where: { storeId: storeId } })
+    Composition.findAll({ where: { storeId: storeId } })
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
-                message: "Gagal memperoleh produk",
+                message: "Gagal memperoleh bahan baku",
                 error: err.message
             });
         });
@@ -57,7 +54,7 @@ exports.all = async (request, response) => {
 exports.findOne = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.findByPk(ID)
+    Composition.findByPk(ID)
         .then((data) => {
             response.send(data);
         }).catch((err) => {
@@ -72,11 +69,11 @@ exports.findOne = (request, response) => {
 exports.update = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.update(request.body, { where: { id: ID }})
+    Composition.update(request.body, { where: { id: ID }})
         .then((result) => {
             if ( result == 1 ) {
                 response.status(200).send({
-                    message: "Informasi produk berhasil diperbarui"
+                    message: "Informasi bahan baku berhasil diperbarui"
                 });
             } else {
                 response.status(500).send({
@@ -96,17 +93,16 @@ exports.update = (request, response) => {
 exports.delete = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    Product.destroy({ where: { id: ID } })
+    Composition.destroy({ where: { id: ID } })
         .then((result) => {
             if (result == 1) {
                 response.status(200).send({
-                    message: "Produk berhasil dihapus"
+                    message: "Bahan baku berhasil dihapus"
                 })
             } else {
                 response.status(500).send({
                     message: `Gagal menghapus data dengan ID: ${ID}`,
                     error: "Don't have access to do this action"
-                    
                 })
             }})
         .catch((err) => {
