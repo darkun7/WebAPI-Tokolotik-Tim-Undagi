@@ -38,4 +38,7 @@ router.put('/:id', verify, validateOwnership, productController.update);
 //Delete Product
 router.delete('/:id', verify, validateOwnership, productController.delete);
 
+//Crawl Review
+router.get('/:id/reviews', verify, validateOwnership, productController.crawlReview);
+
 module.exports = router;

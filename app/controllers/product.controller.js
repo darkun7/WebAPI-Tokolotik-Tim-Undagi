@@ -1,6 +1,8 @@
 const db = require("../models");
 const Product = db.products;
 const Op = db.Sequelize.Op;
+// const crawl = require('../config/crawl');
+const puppeteer = require('puppeteer')
 
 // Create
 exports.create = async (request, response) => {
@@ -132,3 +134,44 @@ exports.delete = (request, response) => {
             })
         });
 };
+
+// Crawl
+exports.crawlReview = async (request, response, next) => {
+    const ID = request.params.id;
+    await Product.findByPk(ID)
+        .then((data) => {
+            response.locals.productURI = data.toJSON().tokopediaProductUrl
+            if( response.locals.productURI == '' ){
+                return response.status(403).send({
+                        message: `Produk tidak terhubung dengan layanan Tokopedia`,
+                        error: "Need to bind product by update product URL"
+                    })
+            }
+            next()
+        }).catch((err) => {
+            response.status(500).send({
+                message: `Gagal memperoleh data dengan ID: ${ID}`,
+                error: err.message
+            });
+        }
+    ),
+    await puppeteer.launch().then(async function(browser) {
+        const page = await browser.newPage();
+        const iPhone = puppeteer.devices['iPhone X'];
+        await page.setDefaultNavigationTimeout(0);
+        await page.emulate(iPhone);
+        await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36');
+        try {
+            await page.goto(response.locals.productURI, {waitUntil: 'networkidle0'});
+            await page.evaluate(() => {
+                window.scrollBy(0, 1000);
+
+            });
+            await page.screenshot({path: 'try.png'})
+        } catch (err) {
+            console.error(err);
+            throw new Error('page.goto/waitForSelector timed out.');
+        }
+        
+    });
+}
