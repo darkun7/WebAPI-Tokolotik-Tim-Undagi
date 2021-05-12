@@ -3,13 +3,14 @@ const verify = require('../../verifyToken');
 
 const db = require("../../../models");
 const User = db.users;
+const Stote = db.stores;
 
 const productController = require('../../../controllers/product.controller')
 
-//Get Product All
-router.get('/', verify, (request,response,next) =>{ 
+//Middleware
+const validateOwnership = async function(request,response,next) {
     let user = request.user;
-    user = User.findByPk(user.id, { include: ["store"] })
+    user = await User.findByPk(user.id, { include: ["store"] })
       .then((userStore) => {
         response.locals.ID = userStore.id
         next()
@@ -17,9 +18,10 @@ router.get('/', verify, (request,response,next) =>{
         response.status(500)
           .send({message: 'Gagal memperoleh data toko', error: err.message });
       });
-    },
-    productController.all
-);
+}
+
+//Get Product All
+router.get('/', verify, validateOwnership, productController.all);
 
 //Get Product
 router.get('/:id', verify, productController.findOne);
@@ -28,12 +30,12 @@ router.get('/:id', verify, productController.findOne);
 /**
  * @request : {"storeId", "tokopediaProductId", "tokopediaProductUrl", "productName", "price", "image"}
  */
-router.post('/', verify, productController.create);
+router.post('/', verify, validateOwnership, productController.create);
 
 //Update Product
-router.put('/:id', verify, productController.update);
+router.put('/:id', verify, validateOwnership, productController.update);
 
 //Delete Product
-router.delete('/:id', verify, productController.delete);
+router.delete('/:id', verify, validateOwnership, productController.delete);
 
 module.exports = router;

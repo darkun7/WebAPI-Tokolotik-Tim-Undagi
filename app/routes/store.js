@@ -1,27 +1,30 @@
 const router = require('express').Router();
 const verify = require('./verifyToken');
 const storesController = require('../controllers/store.controller')
+const productController = require('../controllers/product.controller')
 
 const db = require("../models");
 const User = db.users;
 
-router.get('/', verify, (request, response) => {
-    response.send(request.params.storeId)
-});
+//Get Global Store
+router.get('/', storesController.global);
 
-router.get('/self', verify, async (request, response) => {
-    let user = request.user;
-    user = User.findByPk(user.id, { include: ["store"] })
-      .then((userStore) => {
-        console.log(userStore.toJSON())
-        response.send(userStore.toJSON())
-      }).catch((err) => {
-        console.log('Fail get user-product, Error: ', err)
-      });
-});
+//Get Store Specific
+router.get('/:id', storesController.findOne);
 
-router.post('/create', (request,response) => {
-  response.send('Forgot Password');
-});
+router.get('/:id/products', async (request, response, next) => {
+    response.locals.ID = request.params.id
+    next();
+    },
+    productController.all
+);
+
+router.get('/:id/products/:idProduct', async (request, response, next) => {
+    response.locals.storeID   = request.params.id
+    response.locals.productID = request.params.idProduct
+    next();
+    },
+    productController.findOneProductOfStore
+);
 
 module.exports = router;

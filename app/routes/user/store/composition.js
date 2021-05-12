@@ -3,23 +3,25 @@ const verify = require('../../verifyToken');
 
 const db = require("../../../models");
 const User = db.users;
+const Composition = db.compositions;
 
 const compositionController = require('../../../controllers/composition.controller')
 
+//Middleware
+const validateOwnership = async function(request,response,next) {
+  let user = request.user;
+  user = await User.findByPk(user.id, { include: ["store"] })
+    .then((userStore) => {
+      response.locals.ID = userStore.id
+      next()
+    }).catch((err) => {
+      response.status(500)
+        .send({message: 'Gagal memperoleh data toko', error: err.message });
+    });
+}
+
 //Get Composition All
-router.get('/', verify, (request,response,next) => { 
-    let user = request.user;
-    user = User.findByPk(user.id, { include: ["store"] })
-      .then((userStore) => {
-        response.locals.ID = userStore.id
-        next()
-      }).catch((err) => {
-        response.status(500)
-          .send({message: 'Gagal memperoleh data toko', error: err.message });
-      });
-    },
-    compositionController.all
-);
+router.get('/', verify, validateOwnership, compositionController.all);
 
 //Get Composition
 router.get('/:id', compositionController.findOne);
@@ -29,12 +31,12 @@ router.get('/:id', compositionController.findOne);
  * @request : {"storeId", "compositionName", "unit"}
  */
 //  compositionController.create
-router.post('/', verify, compositionController.create);
+router.post('/', verify, validateOwnership, compositionController.create);
 
 //Update Composition
-router.put('/:id', verify, compositionController.update);
+router.put('/:id', verify, validateOwnership, compositionController.update);
 
 //Delete Composition
-router.delete('/:id', verify, compositionController.delete);
+router.delete('/:id', verify, validateOwnership, compositionController.delete);
 
 module.exports = router;

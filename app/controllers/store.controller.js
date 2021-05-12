@@ -56,3 +56,15 @@ exports.findOne = (request, response) => {
             });
         });
 };
+
+exports.global = async (request, response) => {
+    Store.findAll()
+        .then((data) => {
+            response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message: "Gagal memperoleh toko",
+                error: err.message
+            });
+        });
+};

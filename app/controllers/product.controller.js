@@ -56,13 +56,29 @@ exports.all = async (request, response) => {
 // Find One
 exports.findOne = (request, response) => {
     const ID = request.params.id ? 
-               request.params.id : response.locals.ID;
+               request.params.id : response.locals.productID;
     Product.findByPk(ID)
         .then((data) => {
             response.send(data);
         }).catch((err) => {
             response.status(500).send({
                 message: `Gagal memperoleh data dengan ID: ${ID}`,
+                error: err.message
+            });
+        });
+};
+
+// Find One, Product of
+exports.findOneProductOfStore = (request, response) => {
+    const ID_STORE = response.locals.storeID
+    const ID_PRODUCT = response.locals.productID ? 
+               response.locals.productID : request.params.id;
+    Product.findAll({ where: { id: ID_PRODUCT, storeId: ID_STORE } })
+        .then((data) => {
+            response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message: `Gagal memperoleh data dengan ID: ${ID_PRODUCT}`,
                 error: err.message
             });
         });
