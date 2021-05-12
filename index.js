@@ -19,6 +19,7 @@ if (development){
 
 //Import Routes
 const authRoute = require('./app/routes/auth');
+const userRoute = require('./app/routes/user/user');
 const userStoreRoute = require('./app/routes/user/store');
 const userStoreProductRoute = require('./app/routes/user/store/product');
 const compositionProductRoute = require('./app/routes/user/store/composition');
@@ -28,6 +29,7 @@ const storeRoute = require('./app/routes/store');
 const productRoute = require('./app/routes/product');
 
 app.use('/api/users',authRoute);
+app.use('/api/users',userRoute);
 app.use('/api/users/stores',userStoreRoute);
 app.use('/api/users/stores/products',userStoreProductRoute);
 app.use('/api/users/stores/compositions',compositionProductRoute);

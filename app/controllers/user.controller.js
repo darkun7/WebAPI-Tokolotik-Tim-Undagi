@@ -95,9 +95,42 @@ exports.findOne = (request, response) => {
 };
 
 // Update
-exports.update = (request, response) => {
-
-};
+exports.update = async (request, response) => {
+    const ID = request.params.id ? 
+               request.params.id : request.user.id;
+    //hash
+    const salt = await bcrypt.genSalt(10);
+    let hashPassword  = ''
+    if (typeof request.body.password == 'undefined') {
+        hashPassword = request.user.password
+    } else {
+        hashPassword = await bcrypt.hash(request.body.password, salt);
+    }
+    // const password = request.body.password ? request.body.password : request.user.password
+    const user = {
+        username: request.body.username,
+        email: request.body.email,
+        password: hashPassword
+    }
+    User.update(user, { where: { id: ID }})
+        .then((result) => {
+            if ( result == 1 ) {
+                response.status(200).send({
+                    message: "Informasi pengguna berhasil diperbarui"
+                });
+            } else {
+                response.status(403).send({
+                    message: `Gagal memperbarui data pengguna`,
+                    error: "Don't have access to do this action"
+                })
+            }
+        }).catch((err) => {
+            response.status(500).send({
+                message: `Gagal memperbarui data pengguna`,
+                error: err.message
+            })
+        });
+}
 
 // Delete
 exports.delete = (request, response) => {
