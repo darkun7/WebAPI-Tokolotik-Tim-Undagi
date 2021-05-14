@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+  api:
+    build: ./apps
+    ports:
+     - "3030:3000"
+    depends_on:
+     - db
+    environment:
+     - DATABASE_HOST=db
+    volumes:
+     - ./apps:/app/api-tokolitik
+  db:
+    build: ./database
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3330:3306

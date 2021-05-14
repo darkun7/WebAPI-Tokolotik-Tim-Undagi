@@ -1,0 +1,8 @@
+FROM mysql:8.0
+
+ENV MYSQL_ROOT_PASSWORD undagiteam  
+ENV MYSQL_DATABASE tokolitik  
+ENV MYSQL_USER undagi  
+ENV MYSQL_PASSWORD undagiteam
+
+ADD migration.sql /docker-entrypoint-initdb.d
