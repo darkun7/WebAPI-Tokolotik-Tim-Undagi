@@ -26,11 +26,18 @@ router.get('/', verify, (request,response, next) =>{
 // });
 
 //Update Store
-/**
- * @params  : id | Store ID
- * @request : {storeName, description}
- */
-router.put('/:id', verify, storeController.update);
+ router.put('/', verify, (request,response, next) =>{ 
+  let user = request.user;
+  user = User.findByPk(user.id, { include: ["store"] })
+    .then((userStore) => {
+      response.locals.ID = userStore.id
+      next()
+    }).catch((err) => {
+      console.log('Fail get user-product, Error: ', err)
+    });
+  },
+  storeController.update
+);
 
 //Delete Store
 // router.delete('/:id', verify, (request,response) => { 
