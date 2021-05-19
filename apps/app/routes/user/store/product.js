@@ -24,7 +24,7 @@ const validateOwnership = async function(request,response,next) {
 router.get('/', verify, validateOwnership, productController.all);
 
 //Get Product
-router.get('/:id', verify, productController.findOne);
+router.get('/:id', verify, validateOwnership,productController.findOneProductOfStore);
 
 //Create Product
 /**
