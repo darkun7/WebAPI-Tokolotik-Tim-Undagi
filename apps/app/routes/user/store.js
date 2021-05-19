@@ -7,9 +7,9 @@ const User = db.users;
 const storeController = require('../../controllers/store.controller')
 
 //Get User Store
-router.get('/', verify, (request,response, next) =>{ 
+router.get('/', verify, async (request,response, next) =>{ 
     let user = request.user;
-    user = User.findByPk(user.id, { include: ["store"] })
+    user = await User.findByPk(user.id, { include: ["store"] })
       .then((userStore) => {
         response.locals.ID = userStore.id
         next()
@@ -26,9 +26,9 @@ router.get('/', verify, (request,response, next) =>{
 // });
 
 //Update Store
- router.put('/', verify, (request,response, next) =>{ 
+ router.put('/', verify, async (request,response, next) =>{ 
   let user = request.user;
-  user = User.findByPk(user.id, { include: ["store"] })
+  user = await User.findByPk(user.id, { include: ["store"] })
     .then((userStore) => {
       response.locals.ID = userStore.id
       next()
