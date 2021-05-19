@@ -33,7 +33,7 @@ exports.register = async (request, response) => {
             // Assign Token
             const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '1d'});
             response.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-            response.status(200).header('auth-token', token)
+            response.status(201).header('auth-token', token)
                     .send({
                         token: token,
                         auth: true,
@@ -77,7 +77,7 @@ exports.login = async (request, response) => {
     }
     const token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: '1d'});
     response.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-    response.status(201).header('auth-token', token)
+    response.status(200).header('auth-token', token)
             .send({
                 token: token,
                 auth: true,

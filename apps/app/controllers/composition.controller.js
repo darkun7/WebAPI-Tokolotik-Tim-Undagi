@@ -37,7 +37,7 @@ exports.global = async (request, response) => {
 // Select All record from Store
 exports.all = async (request, response) => {
     const storeId = request.body.storeId ? 
-                    request.body.storeId : response.locals.ID;
+                    request.body.storeId : response.locals.storeID;
     Composition.findAll({ where: { storeId: storeId } })
         .then((data) => {
             response.send(data);
@@ -55,6 +55,23 @@ exports.findOne = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
     Composition.findByPk(ID)
+        .then((data) => {
+            response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message: `Gagal memperoleh data dengan ID: ${ID}`,
+                error: err.message
+            });
+        });
+};
+
+// Find One, Composition of
+exports.findOneCompositionOfStore = (request, response) => {
+    const ID_STORE = request.body.storeId ? 
+                     request.body.storeId : response.locals.storeID;
+    const ID       = request.params.id ?
+                     request.params.id : response.locals.ID;
+    Composition.findAll({ where: { id: ID, storeId: ID_STORE } })
         .then((data) => {
             response.send(data);
         }).catch((err) => {

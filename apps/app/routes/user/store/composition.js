@@ -12,7 +12,7 @@ const validateOwnership = async function(request,response,next) {
   let user = request.user;
   user = await User.findByPk(user.id, { include: ["store"] })
     .then((userStore) => {
-      response.locals.ID = userStore.store.id
+      response.locals.storeID = userStore.store.id
       next()
     }).catch((err) => {
       response.status(500)
@@ -24,7 +24,7 @@ const validateOwnership = async function(request,response,next) {
 router.get('/', verify, validateOwnership, compositionController.all);
 
 //Get Composition
-router.get('/:id', compositionController.findOne);
+router.get('/:id', verify, validateOwnership, compositionController.findOneCompositionOfStore);
 
 //Create Composition
 /**

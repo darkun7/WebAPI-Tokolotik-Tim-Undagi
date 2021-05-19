@@ -14,7 +14,6 @@ exports.create = async (request, response) => {
         price: request.body.price,
         image: request.body.image ? request.body.image: '',
     }
-
     Product.create(product)
         .then((data) => {
             response.status(201).send(data);
@@ -42,7 +41,7 @@ exports.global = async (request, response) => {
 // Select All record from Store
 exports.all = async (request, response) => {
     const storeId = request.body.storeId ? 
-                    request.body.storeId : response.locals.ID;
+                    request.body.storeId : response.locals.storeID;
     Product.findAll({ where: { storeId: storeId } })
         .then((data) => {
             response.send(data);
@@ -113,7 +112,7 @@ exports.update = (request, response) => {
 // Delete
 exports.delete = (request, response) => {
     const ID = request.params.id ? 
-               request.params.id : response.locals.ID;
+               request.params.id : response.locals.storeID;
     Product.destroy({ where: { id: ID } })
         .then((result) => {
             if (result == 1) {
