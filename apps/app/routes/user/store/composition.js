@@ -12,7 +12,7 @@ const validateOwnership = async function(request,response,next) {
   let user = request.user;
   user = await User.findByPk(user.id, { include: ["store"] })
     .then((userStore) => {
-      response.locals.ID = userStore.id
+      response.locals.ID = userStore.store.id
       next()
     }).catch((err) => {
       response.status(500)

@@ -1,8 +1,17 @@
 const express = require('express');
+const path = require('path');
 const env = require('dotenv');
 // const cors = require("cors");
 
 const app = express();
+
+// View
+app.set('views', path.join(__dirname, 'app/views'));
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static('./public'));
+
 app.use(express.json());
 app.use(express.urlencoded({
       extended: true
@@ -39,7 +48,7 @@ app.use('/api/stores',storeRoute);
 app.use('/api/products',productRoute);
 
 app.get("/", (request, response) => {
-    response.json({ message: "API TokoLitik" });
+    response.render('pages/index', { title: "API TokoLitik" });
 });
 
 

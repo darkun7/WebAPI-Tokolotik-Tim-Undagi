@@ -20,9 +20,9 @@ exports.create = (request, response) => {
         });
 };
 
-exports.update = (request, response) => {
-    const ID = request.params.id ? 
-               request.params.id : response.locals.ID;
+exports.update = async (request, response) => {
+    const ID = await request.params.id ?
+               await request.params.id : response.locals.ID;
     Store.update(request.body, { where: { id: ID }})
         .then((result) => {
             if ( result == 1 ) {
@@ -43,9 +43,9 @@ exports.update = (request, response) => {
         });
 }
 
-exports.findOne = (request, response) => {
-    const ID = request.params.id ? 
-               request.params.id : response.locals.ID;
+exports.findOne = async (request, response) => {
+    const ID = await request.params.id ?
+               await request.params.id : response.locals.ID;
     Store.findByPk(ID)
         .then((data) => {
             response.status(200).send(data);

@@ -15,7 +15,7 @@ const validateOwnership = async function(request,response,next) {
     let user = request.user;
     user = await User.findByPk(user.id, { include: ["store"] })
       .then((userStore) => {
-        response.locals.storeID = userStore.id
+        response.locals.storeID = userStore.store.id
       }).catch((err) => {
         response.status(500)
           .send({message: 'Gagal memperoleh data toko', error: err.message });
