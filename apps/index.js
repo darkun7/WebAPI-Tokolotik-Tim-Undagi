@@ -37,6 +37,8 @@ const compositionDetailRoute = require('./app/routes/user/store/compositionDetai
 const storeRoute = require('./app/routes/store');
 const productRoute = require('./app/routes/product');
 
+const dbSeeder = require('./app/seeder');
+
 app.use('/api/users',authRoute);
 app.use('/api/users',userRoute);
 app.use('/api/users/stores',userStoreRoute);
@@ -47,10 +49,12 @@ app.use('/api/users/stores/products',compositionDetailRoute);
 app.use('/api/stores',storeRoute);
 app.use('/api/products',productRoute);
 
+app.use('/dev/refresh',dbSeeder);
+
 app.get("/", (request, response) => {
     response.render('pages/index', { title: "API TokoLitik" });
 });
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server Running Perfectly! 😎 \n Running on port: ${PORT}`));
+app.listen(PORT, () => console.log(`Server Running Perfectly! 😎 \n Running on http://localhost:${PORT}`));
