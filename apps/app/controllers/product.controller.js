@@ -135,6 +135,7 @@ exports.delete = (request, response) => {
         });
 };
 
+//predict review
 exports.testPredict = async (request, response) => {
     const crawl_result = {
         "1": [],
@@ -158,10 +159,105 @@ exports.testPredict = async (request, response) => {
     const model = await tf.loadLayersModel(process.env.MODEL_REVIEW);
     const word2indexjson = await fetch(process.env.W2I_REVIEW);
     word2index = await word2indexjson.json();
-    const input = tf.tensor2d([[65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
-    const result = model.predict(input);
-    response.status(200).send({message:result.dataSync()});
-    console.log( result.dataSync());
+    const maxlen = 20;
+    const vocab_size = 5000;
+    const padding = 'post';
+    const truncating = 'post';
+
+    //concat all arrar list
+    let arr = []
+    arr = arr.concat(crawl_result['1']);
+    arr = arr.concat(crawl_result['2']);
+    arr = arr.concat(crawl_result['3']);
+    arr = arr.concat(crawl_result['4']);
+    arr = arr.concat(crawl_result['5']);
+
+    //console.log(arr)
+    //remove character except string and space, tolowercase and trim the string
+    arr = arr.map(function(item) {
+    item_ = item.replace(/[^a-zA-Z ]/g, " "); 
+    item_ = item_.replace(/  +/g, ' '); 
+    item_ = item_.toLowerCase();  
+    return item_.trim(); 
+    });
+    //console.log(arr)
+
+    //remove empity
+    arr = arr.filter(function(e){ return e === 0 || e });
+    //remove duplicate
+    arr = [...new Set(arr)];
+    //check cleaned string
+    console.log(arr)
+
+    let result = {
+        'negative' : [],
+        'neutral' : [],
+        'positive' : []
+    }
+    for (let i = 0; i < arr.length; i++) {
+        let score = predict(arr[i].split(" "));
+        if(score[0] >= score[1] && score[0] >= score[2]){
+            result['negative'].push(arr[i]);
+        }else if(score[1] >= score[2]){
+            result['neutral'].push(arr[i]);
+        }else{
+            result['positive'].push(arr[i]);
+        }
+        console.log(score[0],score[1],score[2]);
+    }
+
+
+    function predict(inputText){
+
+        const sequence = inputText.map(word => {
+            let indexed = word2index[word];
+
+            if (indexed === undefined){
+                return 1; //change to oov value
+            }
+            return indexed;
+        });
+
+        const paddedSequence = padSequence([sequence], maxlen);
+        console.log(paddedSequence);
+
+        const score = tf.tidy(() => {
+            const input = tf.tensor2d(paddedSequence, [1, maxlen]);
+            const result = model.predict(input);
+            return result.dataSync();
+        });
+
+        return score;
+
+    }
+
+    function padSequence(sequences, maxLen, padding='post', truncating = "post", pad_value = 0){
+        return sequences.map(seq => {
+            if (seq.length > maxLen) { //truncat
+                if (truncating === 'pre'){
+                    seq.splice(0, seq.length - maxLen);
+                } else {
+                    seq.splice(maxLen, seq.length - maxLen);
+                }
+            }
+
+            if (seq.length < maxLen) {
+                const pad = [];
+                for (let i = 0; i < maxLen - seq.length; i++){
+                    pad.push(pad_value);
+                }
+                if (padding === 'pre') {
+                    seq = pad.concat(seq);
+                } else {
+                    seq = seq.concat(pad);
+                }
+            }
+            return seq;
+            });
+    }
+    // const input = tf.tensor2d([[65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
+    // const result = model.predict(input);
+    response.status(200).send(result);
 }
 
 // Crawl
