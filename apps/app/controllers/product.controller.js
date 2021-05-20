@@ -1,8 +1,9 @@
 const db = require("../models");
 const Product = db.products;
 const Op = db.Sequelize.Op;
-// const crawl = require('../config/crawl');
 const puppeteer = require('puppeteer')
+const tf = require('@tensorflow/tfjs');
+const fetch = require('node-fetch');
 
 // Create
 exports.create = async (request, response) => {
@@ -133,6 +134,35 @@ exports.delete = (request, response) => {
             })
         });
 };
+
+exports.testPredict = async (request, response) => {
+    const crawl_result = {
+        "1": [],
+        "2": [],
+        "3": [
+            "Kripik bawang nya enak , sayang nya hancur aja, mungkin perlu dipikirkan kemasan dan cara pengirimannya"
+        ],
+        "4": [],
+        "5": [
+            "enak. renyah.",
+            "",
+            "Trmksh, paket sdah diterima dg baik.",
+            "⭐️⭐️⭐️⭐️⭐️",
+            "mantap pokonya mah... ",
+            "gak cukup 2 plastik.. pingin lagi n lagi",
+            "Renyah dan tidak berminyak.",
+            "Enak, gurih..  pokoknya manteeb bngt deh, mks sis",
+            ""
+        ]
+    }
+    const model = await tf.loadLayersModel(process.env.MODEL_REVIEW);
+    const word2indexjson = await fetch(process.env.W2I_REVIEW);
+    word2index = await word2indexjson.json();
+    const input = tf.tensor2d([[65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
+    const result = model.predict(input);
+    response.status(200).send({message:result.dataSync()});
+    console.log( result.dataSync());
+}
 
 // Crawl
 exports.crawlReview = async (request, response) => {
