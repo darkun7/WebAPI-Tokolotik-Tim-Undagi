@@ -147,7 +147,10 @@ exports.crawlReview = async (request, response) => {
                     })
             }
             // next()
-            await puppeteer.launch().then(async function(browser) {
+            await puppeteer.launch({
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                })
+                .then(async function(browser) {
                 const URI            = response.locals.productURI
                 const PAGINATION     = process.env.TOPED_PAGINATION
                 const NEXT           = process.env.TOPED_PAGINATION_NEXT

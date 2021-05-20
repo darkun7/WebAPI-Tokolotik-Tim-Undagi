@@ -40,7 +40,7 @@ router.get('/', async (request, response) => {
     //User3 @buyyer
     const user3 = await User.create({ 
         username: "Pengguna Buyer",
-        email: "buyyer1@mail.com",
+        email: "buyer1@mail.com",
         password: hashPassword,
         role: "seller",
     });
