@@ -13,7 +13,7 @@ router.get('/', storesController.global);
 router.get('/:id', storesController.findOne);
 
 router.get('/:id/products', async (request, response, next) => {
-    response.locals.ID = request.params.id
+    response.locals.storeID = request.params.id
     next();
     },
     productController.all
