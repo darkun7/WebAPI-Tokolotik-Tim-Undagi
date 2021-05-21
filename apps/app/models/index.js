@@ -31,6 +31,10 @@ db.users.hasOne(db.stores, {
     onDelete: "cascade", foreignKey: 'userId', as: 'store',
 });
 
+db.stores.hasMany(db.products, {
+    onDelete: "cascade", as: 'product',
+});
+
 db.products.belongsTo(db.stores, {
     foreignKey: 'storeId', as: 'store',
 });
@@ -48,6 +52,10 @@ db.compositions.hasMany(db.compositionDetails, {
 
 db.compositionDetails.belongsTo(db.products, {
     foreignKey: 'productId', as: 'product',
+});
+
+db.compositionDetails.belongsTo(db.compositions, {
+    foreignKey: 'compositionId', as: 'composition',
 });
 
 module.exports = db;

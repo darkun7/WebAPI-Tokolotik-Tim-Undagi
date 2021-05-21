@@ -46,7 +46,7 @@ exports.update = async (request, response) => {
 exports.findOne = async (request, response) => {
     const ID = await request.params.id ?
                await request.params.id : response.locals.ID;
-    Store.findByPk(ID)
+    Store.findByPk(ID, { include: ["product"] })
         .then((data) => {
             response.status(200).send(data);
         }).catch((err) => {

@@ -38,7 +38,7 @@ exports.global = async (request, response) => {
 exports.all = async (request, response) => {
     const productId = request.body.productId ? 
                     request.body.productId : response.locals.productID;
-    CompositionDetail.findAll({ where: { productId: productId } })
+    CompositionDetail.findAll({ where: { productId: productId }, include: ["composition", "product"] })
         .then((data) => {
             response.send(data);
         }).catch((err) => {
@@ -54,7 +54,7 @@ exports.all = async (request, response) => {
 exports.findOne = (request, response) => {
     const ID = request.params.id ? 
                request.params.id : response.locals.ID;
-    CompositionDetail.findByPk(ID)
+    CompositionDetail.findByPk(ID, { include: ["composition", "product"] })
         .then((data) => {
             response.send(data);
         }).catch((err) => {
