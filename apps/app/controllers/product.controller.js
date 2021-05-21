@@ -135,27 +135,133 @@ exports.delete = (request, response) => {
         });
 };
 
-//predict review
-exports.testPredict = async (request, response) => {
-    const crawl_result = {
-        "1": [],
-        "2": [],
-        "3": [
-            "Kripik bawang nya enak , sayang nya hancur aja, mungkin perlu dipikirkan kemasan dan cara pengirimannya"
-        ],
-        "4": [],
-        "5": [
-            "enak. renyah.",
-            "",
-            "Trmksh, paket sdah diterima dg baik.",
-            "⭐️⭐️⭐️⭐️⭐️",
-            "mantap pokonya mah... ",
-            "gak cukup 2 plastik.. pingin lagi n lagi",
-            "Renyah dan tidak berminyak.",
-            "Enak, gurih..  pokoknya manteeb bngt deh, mks sis",
-            ""
-        ]
-    }
+// Crawl
+exports.crawlReview = async (request, response, next) => {
+    const ID = request.params.id;
+    await Product.findByPk(ID)
+        .then(async (data) => {
+            response.locals.productURI = data.toJSON().tokopediaProductUrl
+            if( response.locals.productURI == '' ){
+                return response.status(403).send({
+                        message: `Produk tidak terhubung dengan layanan Tokopedia`,
+                        error: "Need to bind product by update product URL"
+                    })
+            }
+            // next()
+            await puppeteer.launch({
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                })
+                .then(async function(browser) {
+                const URI            = response.locals.productURI
+                const PAGINATION     = process.env.TOPED_PAGINATION
+                const NEXT           = process.env.TOPED_PAGINATION_NEXT
+                const REVIEW_BLOCK   = process.env.TOPED_REVIEW_BLOCK
+        
+                let result = {
+                    '1': [],
+                    '2': [],
+                    '3': [],
+                    '4': [],
+                    '5': []
+                };
+        
+                const page = await browser.newPage();
+                const iPhone = puppeteer.devices['iPhone X'];
+                await page.setDefaultNavigationTimeout(0);
+                await page.emulate(iPhone);
+                await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36');
+                try {
+                    await page.goto(URI, {waitUntil: 'networkidle0'});
+                    await page.evaluate(async() => {
+                        window.scrollBy(0, 1000);
+                    });
+                    //Pagination
+                    await page.waitForXPath(PAGINATION);
+                    let [pages] = await page.$x(PAGINATION);
+                    var div_stop = 14
+                    let pages_text = await page.evaluate(el => el.textContent, pages);
+                    const found = pages_text.match(/[.]+/);
+                    let last_page = 1
+                    if (found != null){
+                        last_page = pages_text.split(".").pop()
+                    }else{
+                        last_page = pages_text.slice(-1)
+                    }
+                    var testInt = parseInt(last_page)
+                    if ( Number.isNaN(testInt) ){
+                        div_stop = 15
+                        await page.waitForXPath(PAGINATION.replace("14", 15));
+                        let [pages] = await page.$x(PAGINATION.replace("14", 15));
+                        let pages_text = await page.evaluate(el => el.textContent, pages);
+                        const found = pages_text.match(/[.]+/);
+                        if (found != null){
+                            last_page = await pages_text.split(".").pop();
+                        }else{
+                            last_page = await pages_text.slice(-1);
+                        }
+                    }
+
+                    let btn_place = await parseInt(last_page)
+                    if( btn_place >= 9 ){
+                        btn_place = 11;
+                    }else{
+                        btn_place +=2;
+                    }
+
+                    console.log(`Last page of ${URI} : ${last_page}`);
+                    //@PageLimiter
+                    if(last_page > 20){
+                        last_page = 20
+                        console.log(`Due limit of compile, page reduced to ${last_page}`)
+                    }
+                    //Loop based on page amount
+                    for (let x = 1; x <= last_page; x++){
+                        //Get Review
+                        var review_block = await page.$x(REVIEW_BLOCK);
+                        for (let i = 0; i < review_block.length; i++) {
+                            review_element = await page.evaluate(el => el.innerHTML , review_block[i]); //REVIEW BLOCK
+                            review = await review_element.match(/<span>(.*?)<\/span>/);
+        
+                            if(review != null && review[0] != ""){
+                                review = review[0].replace(/<\/?span[^>]*>/g,"");
+                                review = review.replace(/<br\s*\/?>/gi,' '); //REVIEW
+                                rating = review_element.match(/icnGivenRatingFilter[0-9]+-[1-5]/);
+                                rating = rating[0].slice(-1); //RATING
+                                result[rating].push(review);
+                            }
+                        }
+                        // console.log("Page: ", x);
+                        if(x != last_page){
+                            try{
+                                await page.waitForXPath( NEXT.replace( "14", div_stop.toString())+"["+btn_place+"]" );
+                                let [next_page] = await page.$x( NEXT.replace( "14", div_stop.toString())+"["+btn_place+"]" );
+                                await next_page.click();
+                                // await page.click(next_page[0]);
+                            }catch (err) {
+                                response.locals.crawlResult = result
+                                FeatureReview(request,response,next);
+                            }
+                        }
+                    }
+                    response.locals.crawlResult = result
+                    FeatureReview(request,response,next);
+                    await browser.close();
+                } catch (err) {
+                    throw new Error('page.goto/waitForSelector timed out.');
+                }
+                // Reference: https://github.com/H4rfu1/ML-project-TokoLitik-tim-Undagi/blob/main/Response/CrawlToped.ipynb
+            });
+        }).catch((err) => {
+            response.status(500).send({
+                message: `Gagal memperoleh data dengan ID: ${ID}`,
+                error: err.message
+            });
+        }
+    )}
+
+
+const FeatureReview = async function(request,response,next) {
+    const crawl_result = await response.locals.crawlResult
     const model = await tf.loadLayersModel(process.env.MODEL_REVIEW);
     const word2indexjson = await fetch(process.env.W2I_REVIEW);
     word2index = await word2indexjson.json();
@@ -172,7 +278,6 @@ exports.testPredict = async (request, response) => {
     arr = arr.concat(crawl_result['4']);
     arr = arr.concat(crawl_result['5']);
 
-    //console.log(arr)
     //remove character except string and space, tolowercase and trim the string
     arr = arr.map(function(item) {
     item_ = item.replace(/[^a-zA-Z ]/g, " "); 
@@ -180,14 +285,13 @@ exports.testPredict = async (request, response) => {
     item_ = item_.toLowerCase();  
     return item_.trim(); 
     });
-    //console.log(arr)
 
     //remove empity
     arr = arr.filter(function(e){ return e === 0 || e });
     //remove duplicate
     arr = [...new Set(arr)];
     //check cleaned string
-    console.log(arr)
+    // console.log(arr)
 
     let result = {
         'negative' : [],
@@ -259,97 +363,3 @@ exports.testPredict = async (request, response) => {
     // const result = model.predict(input);
     response.status(200).send(result);
 }
-
-// Crawl
-exports.crawlReview = async (request, response) => {
-    const ID = request.params.id;
-    await Product.findByPk(ID)
-        .then(async (data) => {
-            response.locals.productURI = data.toJSON().tokopediaProductUrl
-            if( response.locals.productURI == '' ){
-                return response.status(403).send({
-                        message: `Produk tidak terhubung dengan layanan Tokopedia`,
-                        error: "Need to bind product by update product URL"
-                    })
-            }
-            // next()
-            await puppeteer.launch({
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                })
-                .then(async function(browser) {
-                const URI            = response.locals.productURI
-                const PAGINATION     = process.env.TOPED_PAGINATION
-                const NEXT           = process.env.TOPED_PAGINATION_NEXT
-                const REVIEW_BLOCK   = process.env.TOPED_REVIEW_BLOCK
-        
-                let result = {
-                    '1': [],
-                    '2': [],
-                    '3': [],
-                    '4': [],
-                    '5': []
-                };
-        
-                const page = await browser.newPage();
-                const iPhone = puppeteer.devices['iPhone X'];
-                await page.setDefaultNavigationTimeout(0);
-                await page.emulate(iPhone);
-                await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36');
-                try {
-                    await page.goto(URI, {waitUntil: 'networkidle0'});
-                    await page.evaluate(async() => {
-                        window.scrollBy(0, 1000);
-                    });
-                    //Pagination
-                    await page.waitForXPath(PAGINATION);
-                    let [pages] = await page.$x(PAGINATION);
-                    let pages_text = await page.evaluate(el => el.textContent, pages);
-                    const found = pages_text.match(/[.]+/);
-                    let last_page = 1
-                    if (found != null){
-                        last_page = pages_text.split(".").pop()
-                    }else{
-                        last_page = pages_text.slice(-1)
-                    }
-                    console.log(`Last page of ${URI} : ${last_page}`);
-                    //Loop based on page amount
-                    for (let x = 1; x <= last_page; x++){
-                        //Get Review
-                        let review_block = await page.$x(REVIEW_BLOCK);
-                        for (let i = 0; i < review_block.length; i++) {
-                            review_element = await page.evaluate(el => el.innerHTML , review_block[i]); //REVIEW BLOCK
-                            review = await review_element.match(/<span>(.*?)<\/span>/);
-        
-                            if(review != null && review[0] != ""){
-                                review = review[0].replace(/<\/?span[^>]*>/g,"");
-                                review = review.replace(/<br\s*\/?>/gi,' '); //REVIEW
-                                rating = review_element.match(/icnGivenRatingFilter[0-9]+-[1-5]/);
-                                rating = rating[0].slice(-1); //RATING
-                                result[rating].push(review);
-                            }
-                        }
-                        console.log("Page: ",x);
-                        if(x != last_page){
-                            try{
-                                await page.waitForXPath(NEXT);
-                                let [next_page] = await page.$x(NEXT);
-                                await page.click(next_page[0]);
-                            }catch (err) {
-                                response.status(200).send(result);
-                            }
-                        }
-                    }
-                    console.log(result);
-                } catch (err) {
-                    console.error(err);
-                    throw new Error('page.goto/waitForSelector timed out.');
-                }
-                // Reference: https://github.com/H4rfu1/ML-project-TokoLitik-tim-Undagi/blob/main/Response/CrawlToped.ipynb
-            });
-        }).catch((err) => {
-            response.status(500).send({
-                message: `Gagal memperoleh data dengan ID: ${ID}`,
-                error: err.message
-            });
-        }
-    )}

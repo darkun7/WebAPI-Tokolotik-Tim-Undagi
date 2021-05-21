@@ -42,6 +42,6 @@ router.delete('/:id', verify, validateOwnership, productController.delete);
 router.get('/:id/reviews', verify, validateOwnership, productController.crawlReview);
 
 //testPredict
-router.get('/:id/predict', verify, validateOwnership, productController.testPredict);
+// router.get('/:id/predict', verify, validateOwnership, productController.testPredict);
 
 module.exports = router;
