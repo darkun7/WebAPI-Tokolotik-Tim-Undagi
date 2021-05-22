@@ -24,6 +24,7 @@
     "node-fetch": "^2.6.1",
     "promise": "^8.1.0",
     "puppeteer": "9.1.1",
+    "random": "^3.0.6",
     "sequelize": "6.6.2"
   }
 }

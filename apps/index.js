@@ -33,6 +33,7 @@ const userStoreRoute = require('./app/routes/user/store');
 const userStoreProductRoute = require('./app/routes/user/store/product');
 const compositionProductRoute = require('./app/routes/user/store/composition');
 const compositionDetailRoute = require('./app/routes/user/store/compositionDetail');
+const transactionRoute = require('./app/routes/user/store/transaction');
 
 const storeRoute = require('./app/routes/store');
 const productRoute = require('./app/routes/product');
@@ -45,6 +46,7 @@ app.use('/api/users/stores',userStoreRoute);
 app.use('/api/users/stores/products',userStoreProductRoute);
 app.use('/api/users/stores/compositions',compositionProductRoute);
 app.use('/api/users/stores/products',compositionDetailRoute);
+app.use('/api/users/stores/products',transactionRoute);
 
 app.use('/api/stores',storeRoute);
 app.use('/api/products',productRoute);
