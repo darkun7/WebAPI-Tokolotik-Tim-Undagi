@@ -9,7 +9,11 @@ const Composition = db.compositions;
 const CompositionDetail = db.compositionDetails;
 
 router.get('/', async (request, response) => {
-    await db.sequelize.sync({ force: true });
+    const development = !!JSON.parse(String(process.env.DEVELOPMENT).toLowerCase());
+    // Models
+    if (development){
+        db.sequelize.sync({ force: true });
+    }
     //==USER==
     //User1 & Store1 @seller
     const salt = await bcrypt.genSalt(10);
