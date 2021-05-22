@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require("bcrypt");
-const rand = require('random')
-const db = require('./models');
+
+const db = require('../models');
 const User = db.users;
 const Store = db.stores;
 const Product = db.products;
 const Composition = db.compositions;
 const CompositionDetail = db.compositionDetails;
-const Transaction = db.transactions;
-
 
 router.get('/', async (request, response) => {
     await db.sequelize.sync({ force: true });
@@ -17,7 +15,7 @@ router.get('/', async (request, response) => {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash("katasandi", salt);
     const user1 = await User.create({ 
-        username: "Cak Iwan",
+        username: "CakIwan",
         email: "seller1@mail.com",
         password: hashPassword,
         role: "seller",
@@ -207,19 +205,6 @@ router.get('/', async (request, response) => {
         compositionId: Composition8.id,
         amount: 1,
     });
-    //==Transaction==
-    for (let i = 1; i <= 5; i++){
-        var record = rand.int(5, 12);
-        for (let j = 1; j <= record; j++){
-            await Transaction.create({
-                productId : i,
-                time: "2021-0"+j.toString()+"-"+rand.int(1, 27).toString(),
-                amount: rand.int(0, 125)
-            });
-        }
-    }   
-    
-
 
     response.status(200).send({message:"Seed successfully"})
 });

@@ -40,9 +40,12 @@ exports.global = async (request, response) => {
 exports.all = async (request, response) => {
     const productId = request.body.productId ? 
                       request.body.productId : response.locals.productID;
-    Transaction.findAll({ where: { productId: productId }, include: [{model: Product, include: [CompositionDetail] }] })
+    Transaction.findAll({ where: { productId: productId } })
         .then((data) => {
-            response.send(data);
+            Product.findByPk(productId, { include: [CompositionDetail]})
+            .then((dataProduct) => {
+                response.send({ transaction: data, product: dataProduct});
+            })
         }).catch((err) => {
             response.status(500).send({
                 message: "Gagal memperoleh transaksi produk",

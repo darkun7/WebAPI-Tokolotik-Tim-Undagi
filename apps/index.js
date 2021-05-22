@@ -38,7 +38,8 @@ const transactionRoute = require('./app/routes/user/store/transaction');
 const storeRoute = require('./app/routes/store');
 const productRoute = require('./app/routes/product');
 
-const dbSeeder = require('./app/seeder');
+const dbSeeder = require('./app/seeder/seeder');
+const dbSeederTransaction = require('./app/seeder/transaction');
 
 app.use('/api/users',authRoute);
 app.use('/api/users',userRoute);
@@ -52,6 +53,7 @@ app.use('/api/stores',storeRoute);
 app.use('/api/products',productRoute);
 
 app.use('/dev/refresh',dbSeeder);
+app.use('/dev/refresh',dbSeederTransaction);
 
 app.get("/", (request, response) => {
     response.render('pages/index', { title: "API TokoLitik" });
