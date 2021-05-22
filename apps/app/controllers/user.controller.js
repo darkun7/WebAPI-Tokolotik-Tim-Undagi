@@ -84,6 +84,26 @@ exports.login = async (request, response) => {
             });
 };
 
+exports.session = async (request, response) => {
+    let token = request.body.token;
+    console.log(token)
+    if(!token) return response.status(401).send({ auth: false, message: 'Akses dicekal' });
+    try {
+        jwt.verify(token, process.env.SECRET_KEY, async function (error, decoded) {
+            if (error) return response.status(500).send({ auth: false, message: 'Token tidak valid' });
+                const uid = decoded.uid;
+                console.log('authenticate')
+                response.status(200).header('auth-token', token)
+                        .send({
+                            token: token,
+                            auth: true,
+                        });
+        });
+    }catch(error){
+        response.status(400).send(error || 'Token tidak valid');
+    }
+}
+
 exports.logout = async (request, response) => {
     response.cookie('jwt', '', { maxAge: 1 });
     response.status(200).send({ 

@@ -5,6 +5,8 @@ router.post('/register', users.register);
 
 router.post('/login', users.login);
 
+router.post('/session', users.session);
+
 router.post('/logout', users.logout);
 
 router.post('/recover', (request,response) => {
