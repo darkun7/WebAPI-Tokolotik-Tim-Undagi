@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 :root {
-    --primer    : #05c46b;
+    --primer    : #007BFF;
     --sekunder  : #ffdd59;
-    --terang    : #f2f9ff;
+    --terang    : #ffffff;
+    --abu-abu   : #F6F6F6;
     --gelap     : #485460;
 }
 
@@ -22,4 +23,93 @@ html, body{
 
 h1,h2,h3,h4,h5,h6{
   margin: 0;
+}
+a{
+  text-decoration: none;
+}
+
+h1{
+  margin-bottom: 25px;
+}
+
+.small{
+  font-size: 9px;
+  color: var(--primer);
+}
+
+section{
+  padding-top: 60px;
+  padding-bottom: 80px;
+}
+section.white{
+  background-color: var(--terang);
+}
+section.gray{
+  background-color: var(--abu-abu);
+}
+
+section.client-section{
+  min-height: 120px;
+  background-color: var(--gelap);
+  color: white;
+}
+
+nav{
+  box-shadow: 0px 0px 15px rgba(72,84,96,0.5);
+}
+.navbar-brand{
+  padding-left: 65px;
+}
+
+.card{
+  padding-top: 2rem;
+  padding-bottom: 20px;
+  margin: 20px;
+  min-width: 250px;
+}
+#heading{
+  min-height: 750px;
+}
+#services{
+  min-height: 500px;
+}
+#features{
+  min-height: 500px;
+}
+#faq{
+  min-height: 500px;
+}
+
+footer{
+  min-height: 90px;
+}
+
+
+.ecom-logo{
+  max-height: 75px;
+  width: auto;
+  max-width: 200px;
+  margin: 0 10px;
+}
+
+/* Gray Img */
+
+img.ecom-logo {
+  filter: grayscale(100%);
+}
+img.ecom-logo:hover {
+  filter: grayscale(0%);
+}
+
+.fs-md-icon{
+  font-size: 3rem !important;
+}
+.fs-md-icon i{
+  background-color:white;
+  padding: 15px;
+  border-radius: 100px;
+}
+
+.card:hover{
+  background-color: var(--abu-abu);
 }
