@@ -47,7 +47,7 @@ app.use('/api/users/stores',userStoreRoute);
 app.use('/api/users/stores/products',userStoreProductRoute);
 app.use('/api/users/stores/compositions',compositionProductRoute);
 app.use('/api/users/stores/products',compositionDetailRoute);
-app.use('/api/users/stores/products',transactionRoute);
+app.use('/api/users/stores',transactionRoute);
 
 app.use('/api/stores',storeRoute);
 app.use('/api/products',productRoute);

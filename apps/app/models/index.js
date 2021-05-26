@@ -63,6 +63,10 @@ db.products.hasMany(db.transactions, {
     onDelete: "cascade", as: 'transaction',
 });
 
+
+db.stores.hasMany(db.transactions, {
+    onDelete: "cascade", as: 'transaction',
+});
 db.transactions.belongsTo(db.products, {
     foreignKey: 'productId'
 });

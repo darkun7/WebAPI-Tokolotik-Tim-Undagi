@@ -7,6 +7,7 @@ const Op = db.Sequelize.Op;
 // Create
 exports.create = async (request, response) => {
     const transaction = {
+        storeId: response.locals.storeID,
         productId : request.body.productId ? request.body.productId : response.locals.productID,
         time: request.body.time,
         amount: request.body.amount
@@ -131,5 +132,20 @@ exports.delete = (request, response) => {
                 message: `Gagal menghapus data transaksi produk`,
                 error: err.message
             })
+        });
+};
+
+// Select All by User
+exports.allByUser = async (request, response) => {
+    const storeId = request.body.storeId ? 
+                    request.body.storeId : response.locals.storeID;
+    Transaction.findAll({ where: { storeId: storeId }, include: ["product"] })
+        .then((data) => {
+                response.send(data);
+        }).catch((err) => {
+            response.status(500).send({
+                message: "Gagal memperoleh transaksi produk",
+                error: err.message
+            });
         });
 };

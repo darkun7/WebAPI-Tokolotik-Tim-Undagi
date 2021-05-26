@@ -4,12 +4,14 @@ const verify = require('../../verifyToken');
 const db = require("../../../models");
 const User = db.users;
 const Product = db.products;
+const Store = db.stores;
+
 
 const transactionController = require('../../../controllers/transaction.controller')
 
 //Middleware
 const validateOwnership = async function(request,response,next) {
-    const ID_PRODUCT = request.params.idProduct
+    const ID_PRODUCT = request.params.idProduct ? request.params.idProduct:null
     const ID         = request.params.id ? request.params.id: null
     response.locals.productID = ID_PRODUCT
     let user = request.user;
@@ -20,7 +22,7 @@ const validateOwnership = async function(request,response,next) {
         response.status(500)
           .send({message: 'Gagal memperoleh data toko', error: err.message });
       });
-    
+    if(request.params.idProduct != null){
     Product.findByPk(ID_PRODUCT)
         .then((dataProduct) =>{
             if( response.locals.storeID == dataProduct.storeId ){
@@ -35,29 +37,49 @@ const validateOwnership = async function(request,response,next) {
             response.status(500)
               .send({message: 'Gagal memperoleh data transaction', error: err.message });
         });
+    }else{
+        next();
+    }
 }
 
 //Get Transaction from Product
-router.get('/:idProduct/transactions', verify, 
+router.get('/products/:idProduct/transactions', verify, 
     validateOwnership, transactionController.all);
 
 //Get Transaction specific
-router.get('/:idProduct/transactions/:id', verify, 
+router.get('/products/:idProduct/transactions/:id', verify, 
     validateOwnership, transactionController.findOne);
 
 //Create Transaction
 /**
  * @request : {"compositionId", "productId", "amount"}
  */
-router.post('/:idProduct/transactions', verify, 
+router.post('/products/:idProduct/transactions', verify, 
     validateOwnership, transactionController.create);
 
 //Update Transaction
-router.put('/:idProduct/transactions/:id', verify, 
+router.put('/products/:idProduct/transactions/:id', verify, 
     validateOwnership,transactionController.update);
 
 //Delete Transaction
-router.delete('/:idProduct/transactions/:id', verify, 
+router.delete('/products/:idProduct/transactions/:id', verify, 
     validateOwnership, transactionController.delete);
+
+//Read All Transaction (user)
+router.get('/transactions', verify, 
+    validateOwnership, transactionController.allByUser);
+
+//Read Specific Transaction (user)
+router.get('/transactions/:id', verify, 
+    validateOwnership, transactionController.findOne);
+
+//Update Transaction (user)
+router.put('/transactions/:id', verify, 
+    validateOwnership,transactionController.update);
+
+//Delete Transaction (user)
+router.delete('/transactions/:id', verify, 
+    validateOwnership, transactionController.delete);
+
 
 module.exports = router;

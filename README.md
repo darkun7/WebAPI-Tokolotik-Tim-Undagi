@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://github.com/darkun7/ojs-theme/">
-    <img src="apps/public/assets/logo-tokolitik.png" alt="Logo Tokolitik" width="245px">
+  <a href="https://github.com/darkun7/WebAPI-Tokolotik-Tim-Undagi/">
+    <img src="apps/public/assets/logo-tokolitik.png" alt="Logo Tokolitik" width="120px">
   </a>
   <h3 align="center">API Tokolitik</h3>
   <p align="center">Tokolitik is an app that will help the industry to analyze their product. It will cover product sales predict and review analytic.</p>
