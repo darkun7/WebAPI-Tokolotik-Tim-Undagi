@@ -41,7 +41,7 @@ router.delete('/:id', verify, validateOwnership, productController.delete);
 //Crawl Review
 router.get('/:id/reviews', verify, validateOwnership, productController.crawlReview);
 
-//testPredict
-// router.get('/:id/predict', verify, validateOwnership, productController.testPredict);
+//testWordCloud
+// router.get('/:id/WC', productController.testWC);
 
 module.exports = router;

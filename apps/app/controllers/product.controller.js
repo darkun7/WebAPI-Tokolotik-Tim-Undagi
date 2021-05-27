@@ -1,4 +1,5 @@
 const db = require("../models");
+const HTTPrequest = require('request').defaults({ encoding: null });
 const Product = db.products;
 const Op = db.Sequelize.Op;
 const puppeteer = require('puppeteer')
@@ -359,7 +360,69 @@ const FeatureReview = async function(request,response,next) {
             return seq;
             });
     }
-    // const input = tf.tensor2d([[65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
-    // const result = model.predict(input);
-    response.status(200).send(result);
+    // response.status(200).send(result);
+    requestWordCloud(result, response)
+}
+
+//WordCloud
+async function requestWordCloud(PredictResult, response) {
+    new Promise( async function(resolve, reject) {
+        const wc = await wordCloud(PredictResult,response);
+        setTimeout(() => {
+            const error = false;
+            if (!error){
+                resolve(wc);
+            }else{
+                reject("Something went wrong")
+            }
+        }, 10000)
+    })
+    .then((result)=>{
+            PredictResult['image'] = result
+            response.status(200).send(PredictResult);
+        })
+}
+
+async function base64_encode(bitmap) {
+    return new Buffer(bitmap).toString('base64');
+}
+async function wordCloud(json, response) {
+    var wordCloud = {};
+    for (const property in json) {
+        // console.log(`${property}: ${PredictResult[property]}`);
+        let phrase = await json[property].join(' ')
+        var base64 = null
+        new Promise(async function(resolve, reject) {
+            HTTPrequest.post({
+                "headers": {"content-type": "application/json"},
+                "url": "https://quickchart.io/wordcloud",
+                "body": JSON.stringify({
+                "format": "png",
+                "width": 600,
+                "height": 600,
+                "backgroundColor" : "white",
+                "fontScale": 42,
+                "scale": "linear",
+                "removeStopwords": true,
+                "minWordLength": 4,
+                "colors" : ["black"],
+                "text": phrase
+                })
+            }, async (err, res, body) =>{
+                console.log(res.statusCode)
+                if( err ){
+                    return console.log(err.message);
+                }
+                base64 = await base64_encode(body);
+                console.log("--converting image finished--")
+                resolve();
+                })
+            })
+            .then( async (result)=>{
+                // response.status(200).send({message: result})
+                // return wordCloud;
+                wordCloud[property]= await base64;
+            })
+    }
+    return wordCloud;
 }
