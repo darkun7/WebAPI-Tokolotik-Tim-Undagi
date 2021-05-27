@@ -1,6 +1,8 @@
 const db = require("../models");
 const HTTPrequest = require('request').defaults({ encoding: null });
 const Product = db.products;
+const CompositionDetail = db.compositionDetails;
+const Composition = db.compositions;
 const Op = db.Sequelize.Op;
 const puppeteer = require('puppeteer')
 const tf = require('@tensorflow/tfjs');
@@ -76,7 +78,11 @@ exports.findOneProductOfStore = (request, response) => {
     const ID_STORE = response.locals.storeID
     const ID_PRODUCT = response.locals.productID ? 
                response.locals.productID : request.params.id;
-    Product.findAll({ where: { id: ID_PRODUCT, storeId: ID_STORE } })
+    Product.findAll({ where: { id: ID_PRODUCT, storeId: ID_STORE },
+        // include: [CompositionDetail]
+        include: [{model: CompositionDetail, include: ["composition"] ,
+         attributes:['compositionId', 'amount']}]
+     })
         .then((data) => {
             response.send(data);
         }).catch((err) => {

@@ -43,7 +43,8 @@ exports.all = async (request, response) => {
                       request.body.productId : response.locals.productID;
     Transaction.findAll({ where: { productId: productId } })
         .then((data) => {
-            Product.findByPk(productId, { include: [CompositionDetail]})
+            Product.findByPk(productId, { include: {model: CompositionDetail, include: ["composition"] ,
+                                                    attributes:['compositionId', 'amount']} })
             .then((dataProduct) => {
                 response.send({ transaction: data, product: dataProduct});
             })
