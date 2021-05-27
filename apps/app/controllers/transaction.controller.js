@@ -139,7 +139,7 @@ exports.delete = (request, response) => {
 exports.allByUser = async (request, response) => {
     const storeId = request.body.storeId ? 
                     request.body.storeId : response.locals.storeID;
-    Transaction.findAll({ where: { storeId: storeId }, include: ["product"] })
+    Transaction.findAll({ where: { storeId: storeId }, include: ["product"],limit: 50 })
         .then((data) => {
                 response.send(data);
         }).catch((err) => {
