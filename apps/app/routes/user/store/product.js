@@ -6,6 +6,7 @@ const User = db.users;
 const Stote = db.stores;
 
 const productController = require('../../../controllers/product.controller')
+const predictTransaction = require('../../../helpers/predict_transaction')
 
 //Middleware
 const validateOwnership = async function(request,response,next) {
@@ -40,6 +41,9 @@ router.delete('/:id', verify, validateOwnership, productController.delete);
 
 //Crawl Review
 router.get('/:id/reviews', verify, validateOwnership, productController.crawlReview);
+
+//Crawl Review
+router.get('/:id/transactions', verify, validateOwnership, predictTransaction.predict);
 
 //testWordCloud
 // router.get('/:id/WC', productController.testWC);
