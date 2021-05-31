@@ -1,5 +1,6 @@
 const db = require("../models");
 const CompositionDetail = db.compositionDetails;
+const Product = db.products;
 const Op = db.Sequelize.Op;
 
 // Create
@@ -9,15 +10,29 @@ exports.create = async (request, response) => {
         compositionId: request.body.compositionId,
         amount: request.body.amount ? request.body.amount : 1,
     }
-    
-    CompositionDetail.create(compositionDetail)
-        .then((data) => {
-            response.status(201).send(data);
-        }).catch((err) => {
-            response.status(500).send({
-                message: "Gagal menambah data bahan baku produk",
-                error: err.message
+    Product.findOne({ where: { id: compositionDetail.productId}, include: [{model:CompositionDetail,attributes:["id"]}]})
+        .then((comp) => {
+            let idProdComp = comp.composition_details
+            let idComp = []
+            idProdComp.forEach(function(item) {
+                idComp.push(item.id)
             });
+            let input= compositionDetail.compositionId
+            if (idComp.includes(input)){
+                response.status(500).send({
+                    message: "Gagal menambah data bahan baku produk",
+                    error: "composition already exist"
+                });
+            }
+            CompositionDetail.create(compositionDetail)
+                .then((data) => {
+                    response.status(201).send(data);
+                }).catch((err) => {
+                    response.status(500).send({
+                        message: "Gagal menambah data bahan baku produk",
+                        error: err.message
+                    });
+                });
         });
 };
 
