@@ -76,8 +76,8 @@ exports.predict = async (request, response) => {
   const URL       = process.env.APP_URL+`/api/users/stores/products/${productId}/transactions/`;
   modelPredict(productId, URL, token,request, response);
   response.status(200).send({
-    compositions       : process.env.APP_URL+`/result/productId_${id}/compositions_pred.json`,
-    next_6_months      : process.env.APP_URL+`/result/productId_${id}/next_6_months.png`,
-    start_next_6_months: process.env.APP_URL+`/result/productId_${id}/start_next_6_months.png`,
+    compositions       : process.env.APP_URL+`/result/productId_${productId}/compositions_pred.json`,
+    next_6_months      : process.env.APP_URL+`/result/productId_${productId}/next_6_months.png`,
+    start_next_6_months: process.env.APP_URL+`/result/productId_${productId}/start_next_6_months.png`,
   });
 }
