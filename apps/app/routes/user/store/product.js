@@ -43,7 +43,7 @@ router.delete('/:id', verify, validateOwnership, productController.delete);
 router.get('/:id/reviews', verify, validateOwnership, productController.crawlReview);
 
 //Crawl Review
-router.get('/:id/transactions', verify, validateOwnership, predictTransaction.predict);
+router.get('/:id/sales', verify, validateOwnership, predictTransaction.predict);
 
 //testWordCloud
 // router.get('/:id/WC', productController.testWC);

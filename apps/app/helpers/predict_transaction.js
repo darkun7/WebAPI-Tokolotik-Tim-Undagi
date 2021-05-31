@@ -59,25 +59,8 @@ function modelPredict(id, url, token,request, response) {
 }
 
 exports.predict = async (request, response) => {
-//   var exec = require( 'child_process' ).exec;
-
-// console.log( "process.cwd()\t\t: " + process.cwd()  );
-
-// exec( 'cd', function( error, stdout ) {
-//     console.log( "`cd` stdout\t\t: " + stdout );
-
-//     exec( 'cd', { cwd: process.cwd() }, function( error, stdout ) {
-//         console.log( "`cd` stdout with cwd\t: " + stdout );
-//     } );
-// } );
-
   const productId = request.params.id;
   const token     = request.header('auth-token');
   const URL       = process.env.APP_URL+`/api/users/stores/products/${productId}/transactions/`;
   modelPredict(productId, URL, token,request, response);
-  response.status(200).send({
-    compositions       : process.env.APP_URL+`/result/productId_${productId}/compositions_pred.json`,
-    next_6_months      : process.env.APP_URL+`/result/productId_${productId}/next_6_months.png`,
-    start_next_6_months: process.env.APP_URL+`/result/productId_${productId}/start_next_6_months.png`,
-  });
 }
