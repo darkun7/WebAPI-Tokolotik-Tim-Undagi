@@ -15,7 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 # 1 ----- IMPORT DATASET ----- #
 productId = str(sys.argv[1])
-dataset_DIR = os.getcwd()+"/public/result"+"/"+'productId_{}'.format(productId)
+dataset_DIR = os.getcwd()+'/public/result/productId_{}'.format(productId)
 
 df = pd.read_json('{}/data.json'.format(dataset_DIR))
 df["date"] = df["date"].dt.date
@@ -265,9 +265,9 @@ storeId = product["storeId"]
 #result_ROOT1 = os.getcwd()
 #result_ROOT2 = "{}/{}".format(result_ROOT1, storeId)
 #result_dir = "{}/{}".format(result_ROOT2, productId)
-dataset_ROOT = os.getcwd()+"/public/result"
-result_dir = "{}/productId_{}".format(dataset_ROOT, productId)
-
+#dataset_ROOT = os.getcwd()+"/public/result"
+#result_dir = "{}/productId_{}".format(dataset_ROOT, productId)
+result_dir = dataset_DIR
 pred_image_path = "{}/next_6_months.png".format(result_dir)
 
 #isRoot1Exist = os.path.isdir(result_ROOT1)
