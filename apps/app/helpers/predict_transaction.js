@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 
 function prepareData(url, token, successCallback, errorCallback) {
   
-  const dataPreparation = spawn("python", [
+  const dataPreparation = spawn("python3", [
     "public/model/model-transaction/dataset_preparation.py",
     url,
     token,
@@ -29,7 +29,7 @@ function modelPredict(id, url, token,request, response) {
       (auth_status) => {
         resolve(auth_status);
         if (auth_status == 200) {
-          const modelData = spawn("python", ["public/model/model-transaction/model_predict.py", id]);
+          const modelData = spawn("python3", ["public/model/model-transaction/model_predict.py", id]);
           modelData.stdout.on("data", (data) => {
             console.log(`${data}`)
             return;
