@@ -140,8 +140,9 @@ from tensorflow.keras.layers import *
 model = tf.keras.models.Sequential()
 model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True), input_shape=(n_steps_in, n_features)))
 model.add(LSTM(100, activation='relu'))
+model.add(Dense(50, activation="relu"))
 model.add(Dense(n_steps_out))
-model.compile(optimizer='adam', loss='mse')
+model.compile(optimizer='adam', loss=tf.keras.losses.Huber(), metrics=[tf.keras.metrics.RootMeanSquaredError()])
 
 # 6 ----- FIT MODEL ----- #
 model.fit(X, y, epochs=300, verbose=1)
