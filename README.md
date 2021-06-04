@@ -21,19 +21,29 @@ Run commands
 3) ```cp .env.example .env.js```
 4) ```npm run start:dev```
 ## Using Docker
-Coming Soon
+1) ```git clone https://github.com/darkun7/WebAPI-Tokolotik-Tim-Undagi.git```
+2) ```docker-compose build```
+3) ```docker run -d -p 3000:3000 [image id]```
 
 # Demo
 Click to view - [demo]
+## Demo Account: 
+* 1st account
+  * Username : Cakiwan
+  * Password : katasandi
+* 2nd account
+  * Username : Astwoty
+  * Password : katasandi
 
 # Contributor
   - [Darkun7] Backend API
   - [H4rfu1] Machine Learning
+  - [fitrianinasir] Machine Learning
   - [doloksa] Dockerize
-
 
    [Darkun7]: <https://github.com/darkun7>
    [H4rfu1]: <https://github.com/H4rfu1>
    [doloksa]: <https://github.com/doloksa>
+   [fitrianinasir]: <https://github.com/fitrianinasir>
    [git-repo-url]: <https://github.com/darkun7/WebAPI-Tokolotik-Tim-Undagi/>
-   [demo]: <http://kulacino.my.id:3000>
+   [demo]: <https://tokolitik.tech>
