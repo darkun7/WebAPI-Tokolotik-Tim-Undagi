@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
 const env = require('dotenv');
-// const cors = require("cors");
+const cors = require("cors");
 
 const app = express();
+app.use(cors())
 
 // View
 app.set('views', path.join(__dirname, 'app/views'));
