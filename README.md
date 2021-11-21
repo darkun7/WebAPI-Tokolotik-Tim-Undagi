@@ -18,7 +18,7 @@
 Run commands
 1) ```cd apps```
 2) ```npm install```
-3) ```cp .env.example .env.js```
+3) ```cp .env.example .env```
 4) ```npm run start:dev```
 ## Using Docker
 1) ```git clone https://github.com/darkun7/WebAPI-Tokolotik-Tim-Undagi.git```
